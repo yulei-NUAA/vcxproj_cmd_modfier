@@ -1,0 +1,25 @@
+0.file content
+    VSProjManager_help.txt------This text help document
+    VSProjTestBat.bat-----------A BAT script running in Windows Shell or CMD Environment
+    VSProjManager.exe-----------Execuable file  of VSProjManager
+    TestProject.vcxproj---------Project Define File of VS2015 C/C++ Project 
+    TestProject.vcxproj.filters-Project Define File of VS2015 C/C++ Project 
+    source_file1.h--------------Source code of TestProject
+    source_file1.cpp------------Source code of TestProject
+    source----------------------Source code of TestProject in subdir
+
+    [origin]TestProject.vcxproj
+    [origin]TestProject.vcxproj.filters-Original Project Define File
+
+    [target]TestProject.vcxproj
+    [target]TestProject.vcxproj.filters-Manualy generated target Project Define File
+
+1.usage
+Open explorer or in C:\...\TestProject\ , 
+just run the bat file 'VSProjTestBat.bat' and you will get the target project define file
+
+3.command help information
+open cmd and enter the project directory,
+use  'VSProjManager.exe --help' or 'VSProjManager.exe --h' to get help information.
+
+
