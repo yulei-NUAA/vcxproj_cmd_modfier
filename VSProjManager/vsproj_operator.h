@@ -11,7 +11,7 @@
 #include "stringSpliter.h"
 using namespace std;
 
-TiXmlElement * getTiXmlGroup(TiXmlDocument* tixml_doc, const char* group_name, int idx);
+TiXmlElement * getTiXmlGroup(TiXmlDocument* tixml_doc, const char* group_name, const char * item_type);
 bool FilterExist(TiXmlElement * itemgroup, string filter_name);
 vector<string> RemoveFileNodeByFilter(TiXmlElement * itemgroup, string filter_name);
 void RemoveFileNodeByFile(TiXmlElement * itemgroup, vector<string> rmfile_list);

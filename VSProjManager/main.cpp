@@ -1,9 +1,9 @@
-/************************************************************************/
-/*	filename : main.cpp
-	author   : yulei@nuaa.edu.cn
-	content  : main func of VSProjManager
-	date     : 2019-12-29
-*/
+/************************************************************************
+ * filename : main.cpp
+ * author   : yulei@nuaa.edu.cn
+ * content  : main func of VSProjManager
+ * date     : 2019-12-29
+ * 
 /************************************************************************/
 
 #include <iostream>
@@ -55,7 +55,29 @@ TiXmlElement *filter_itemgroup3;/* 保存ClInclude，而且子节点中存有filter的名称 *
 
 void PrintHelp()
 {
-	cout << "==================== VS Proj Manager Help Info ====================" << endl;
+	//cout << "==================== VS Proj Manager Help Info ====================" << endl;
+	cout << "Usage: VSProjManager -p=proj_name -fi=filter_name [-f=file_name1,file_name2] [option]" << endl;
+	cout << "--version       : ";  //打印版本信息
+	cout << "print the  version info; also as -v" << endl;
+	cout << "--help          : ";  //打印帮助信息
+	cout << "print this help message and exit; also as -h" << endl;
+	cout << "--proj_name=[]  : ";  //工程名称 用于指定要进行修改的工程名称，可以包含工程所在路径
+	cout << "set the project name; also as -p=[]" << endl;
+	cout << "--directory=[]  : ";  //待添加的文件所在目录（可以是绝对目录，也可以是相对目录）
+	cout << "set the directory of target source file; also as -d=[]" << endl;
+	cout << "--filter_name=[]: ";  //过滤器名称 用于指定待添加的目录所在的过滤器路径
+	cout << "set the target fileter name in *.vcxproj.filter file; also as -fi=[]" << endl;
+	cout << "--file_name=[]  : ";  //待添加的文件（可以是绝对路径，也可以是相对路径）
+	cout << "set the target source file list; also as -f=[]" << endl;
+	cout << "--sub_directory : ";  //循环查找子目录里的文件
+	cout << "if set, program will search source file in subdir of the target directory; also as -s" << endl;
+	cout << "--no_bakup      : ";  //备份开关默认打开，此参数会关闭自动备份	
+	cout << "if set, program will not create bakup files before operation; also as -nb" << endl;
+	cout << "--check         : ";  //只进行检查，打印出会被添加的文件，不进行文件写操作
+	cout << "if set, program will not write file to disk, just print the search result; also as -c" << endl;
+	cout << "--empty_filter  : ";  //清除指定的filter中包含的文件
+	cout << "if set, program will empty the target filter; also as -e" << endl;
+	//cout << "--file_type = [](-t=[])   " << endl;  //要添加的文件类型（c，cpp）用例：--file_type = c, cpp, php, xml
 }
 
 void BackupProjFile(string file_name)
@@ -115,10 +137,11 @@ vector<string> GetSearchFilelist(string search_dir, vector<string> cata_type, ch
 		file_num = getFileNameList(final_search_dir, "*", file_list, find_subdir);
 		for (int i = 0; i < file_num; i++)
 		{
-			string tmp_string = file_list[i];
+			string tmp_string = search_dir + "\\" + file_list[i];
 			search_result.push_back(tmp_string);
 			//cout << i << ":" << search_result[i] << endl;
-			printf("find %03dth file : file name is %s \n", i + 1, tmp_string);
+			//printf("find %03dth file : file name is %s \n", i + 1, tmp_string);
+			cout << "find " << i + 1 << "th file : file name is " << tmp_string << endl;
 		}
 	}
 	else
@@ -134,7 +157,7 @@ vector<string> GetSearchFilelist(string search_dir, vector<string> cata_type, ch
 			result_num = getFileNameList(final_search_dir, pattern, file_list, find_subdir);
 			for (int i = 0; i < result_num; i++)
 			{
-				string tmp_string = file_list[i];
+				string tmp_string = search_dir + "\\" + file_list[i];
 				search_result.push_back(tmp_string);
 				/*cout << "find " << file_num + i + 1 << "th file :" << search_result[i] << endl;*/
 				printf("find %03dth file : file name is %s \n", file_num + i + 1, tmp_string.c_str());
@@ -209,11 +232,11 @@ bool options(int count, char* arg[])
 			cout << "warning: operation without backup file before, this will be dangerous! " << endl;
 			back_up = false;
 		}
-		else if (keyword == "--file_type" || keyword == "-t")
-		{
-			//cout << "warning: this operation is not supported yet!" << endl;
-			type_list = split(value, ",");
-		}
+		// else if (keyword == "--file_type" || keyword == "-t")
+		// {
+		// 	//cout << "warning: this operation is not supported yet!" << endl;
+		// 	type_list = split(value, ",");
+		// }
 		else if (keyword == "--check" || keyword == "-c")
 		{
 			check_flag = true;
@@ -259,8 +282,8 @@ bool options(int count, char* arg[])
 		filename = proj_name + VCPROJ_FILE_EXTENSION;
 		filterfilename = proj_name + VCPROJ_FILTER_EXTENSION;
 
-		bool openproj = vsproj_xml.LoadFile(filename.c_str(), TIXML_ENCODING_UTF8);
-		bool openfilter = filter_xml.LoadFile(filterfilename.c_str(), TIXML_ENCODING_UTF8);
+		bool openproj = vsproj_xml.LoadFile(filename.c_str());
+		bool openfilter = filter_xml.LoadFile(filterfilename.c_str());
 		if (openproj && openfilter)
 		{
 			cout << "load file '" << filename << "' and '" << filterfilename << "' succeed!" << endl;
@@ -273,18 +296,18 @@ bool options(int count, char* arg[])
 		}
 	}
 
-	vsproj_itemgroup1 = getTiXmlGroup(&vsproj_xml,"ItemGroup",1);/* 保存ProjectConfiguration */
-	vsproj_itemgroup2 = getTiXmlGroup(&vsproj_xml, "ItemGroup", 2);/* 保存ClCompile */
-	vsproj_itemgroup3 = getTiXmlGroup(&vsproj_xml, "ItemGroup", 3);;/* 保存ClInclude */
-	filter_itemgroup1 = getTiXmlGroup(&filter_xml, "ItemGroup", 1);;/* 保存Filter */
-	filter_itemgroup2 = getTiXmlGroup(&filter_xml, "ItemGroup", 2);;/* 保存ClCompile，而且子节点中存有filter的名称 */
-	filter_itemgroup3 = getTiXmlGroup(&filter_xml, "ItemGroup", 3);;/* 保存ClInclude，而且子节点中存有filter的名称 */
+	vsproj_itemgroup1 = getTiXmlGroup(&vsproj_xml,"ItemGroup","ProjectConfiguration");/* 保存ProjectConfiguration */
+	vsproj_itemgroup2 = getTiXmlGroup(&vsproj_xml, "ItemGroup", "ClCompile");/* 保存ClCompile */
+	vsproj_itemgroup3 = getTiXmlGroup(&vsproj_xml, "ItemGroup", "ClInclude");/* 保存ClInclude */
+	filter_itemgroup1 = getTiXmlGroup(&filter_xml, "ItemGroup", "Filter");/* 保存Filter */
+	filter_itemgroup2 = getTiXmlGroup(&filter_xml, "ItemGroup", "ClCompile");/* 保存ClCompile，而且子节点中存有filter的名称 */
+	filter_itemgroup3 = getTiXmlGroup(&filter_xml, "ItemGroup", "ClInclude");/* 保存ClInclude，而且子节点中存有filter的名称 */
 	
 	return result;
 }
  
 
-vector<string> getCompileFileList(vector<string> file_list, int compile_able)
+vector<string> getCompileFileList(vector<string> file_list, string dir, int compile_able)
 {
 	vector<string> result;
 	char str[260];
@@ -331,6 +354,12 @@ vector<string> getCompileFileList(vector<string> file_list, int compile_able)
 
 void real_main(int argc, char*argv[])
 {
+	cout << "Input Command is: ";
+	for (int i=0;i<argc;i++)
+	{
+		cout << argv[i];
+	}
+	cout << endl;
 	bool param_proc_success;
 
 	// *** INIT OPTIONS VALUES OR FLAGS FOR THIS APPLICATION ***//
@@ -354,7 +383,7 @@ void real_main(int argc, char*argv[])
 
 	// *** 根据输入参数执行文件添加的操作 *** //
 	// 根据需要备份当前工程文件
-	if (back_up)
+	if (back_up && !check_flag)
 	{
 		BackupProjFile(proj_name);
 	}
@@ -390,8 +419,8 @@ void real_main(int argc, char*argv[])
 
 	// 对待添加文件列表进行分类：可编译文件、包含文件
 	file_list.insert(file_list.end(),filepath_list.begin(),filepath_list.end());
-	vector<string> clc_list = getCompileFileList(file_list,1);//获取可以编译的文件列表
-	vector<string> inc_list = getCompileFileList(file_list,0);//获取不可编译的文件列表
+	vector<string> clc_list = getCompileFileList(file_list, directory, 1);//获取可以编译的文件列表
+	vector<string> inc_list = getCompileFileList(file_list, directory, 0);//获取不可编译的文件列表
 
 	// 进行文件插入操作
 	InsertFileToXml(filter_itemgroup2, clc_list, "ClCompile", filter_name);

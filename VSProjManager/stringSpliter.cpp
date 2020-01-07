@@ -1,5 +1,14 @@
 #include "stringSpliter.h"
 
+//************************************
+// Method:    splitWithStl
+// FullName:  splitWithStl
+// Access:    public 
+// Returns:   std::vector<std::string>
+// Qualifier:
+// Parameter: const std::string & str
+// Parameter: const std::string & pattern
+//************************************
 std::vector<std::string> splitWithStl(const std::string &str, const std::string &pattern)
 {
 	std::vector<std::string> resVec;
@@ -25,6 +34,15 @@ std::vector<std::string> splitWithStl(const std::string &str, const std::string 
 	return resVec;
 }
 
+//************************************
+// Method:    split
+// FullName:  split
+// Access:    public 
+// Returns:   std::vector<std::string>
+// Qualifier:
+// Parameter: const std::string & str
+// Parameter: const std::string & pattern
+//************************************
 std::vector<std::string> split(const std::string &str, const std::string &pattern)
 {
 	//const char* convert to char*

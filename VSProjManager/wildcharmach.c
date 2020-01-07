@@ -9,13 +9,16 @@
 /* 匹配一个字符的宏 */
 #define MATCH_CHAR(c1,c2,ignore_case) ( (c1==c2) || ((ignore_case==1) &&(tolower(c1)==tolower(c2))) )
 
-/*  通配符匹配算法
-*     src  字符串
-*     pattern  含有通配符( * 或 ? 号)的字符串
-*     ignore_case 是否区分大小写，1 表示不区分,  0 表示区分
-*
-*  返回1表示 src 匹配 pattern，返回0表示不匹配
-*/
+//************************************
+// Method:    WildCharMatch
+// FullName:  通配符匹配函数
+// Access:    public 
+// Returns:   int
+// Qualifier:
+// Parameter: char * src 目标字符串
+// Parameter: char * pattern 含有通配符( * 或 ? 号)的字符串
+// Parameter: int ignore_case 是否区分大小写，1 表示不区分,  0 表示区分
+//************************************
 int WildCharMatch(char *src, char *pattern, int ignore_case)
 {
 	int result;

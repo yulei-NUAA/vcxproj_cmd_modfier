@@ -22,20 +22,26 @@
 // Parameter: const char* group_name 查询的group名称
 // Parameter: int idx 指定要获取的是第几个group
 //************************************
-TiXmlElement * getTiXmlGroup(TiXmlDocument* tixml_doc, const char* group_name, int idx)
+TiXmlElement * getTiXmlGroup(TiXmlDocument* tixml_doc, const char* group_name, const char * item_type)
 {
 	TiXmlElement *itemGroupNode;
-	int cur_id = 1;
 	if (tixml_doc->FirstChildElement() != NULL)
 		itemGroupNode = tixml_doc->FirstChildElement()->FirstChildElement(group_name);
-
+	else
+		itemGroupNode = NULL;
 
 	while (itemGroupNode != NULL)
 	{
-		if (idx == cur_id)
+		if (itemGroupNode->FirstChildElement(item_type) == NULL)
+		{
+			itemGroupNode = (TiXmlElement *)itemGroupNode->NextSiblingElement(group_name);
+		}
+		else
+		{
 			break;
-		itemGroupNode = (TiXmlElement *)itemGroupNode->NextSiblingElement(group_name);
-		cur_id++;
+		}
+		
+		
 	}
 
 	return itemGroupNode;
@@ -55,13 +61,26 @@ bool FilterExist(TiXmlElement * itemgroup, string filter_name)
 {
 	//throw std::logic_error("The method or operation is not implemented.");
 	WCHAR WideCharFilter[100] = { 0 };
-	TiXmlElement *filter_node = itemgroup->FirstChildElement("Filter");
+	TiXmlElement *filter_node; 
+	if (itemgroup == NULL)
+	{
+		return false;
+	}
+	filter_node = itemgroup->FirstChildElement("Filter");
+	if (filter_node == NULL)
+	{
+		return false;
+	}
 	MultiByteToWideChar(CP_ACP, MB_ERR_INVALID_CHARS, filter_name.c_str(), filter_name.length(), WideCharFilter, sizeof(WCHAR) * 100);
 
 	while (filter_node!=NULL)
 	{
 		WCHAR WideCharStr[100] = {0};
-		string tmp_filter_name = filter_node->Attribute("Include");		
+		string tmp_filter_name = filter_node->Attribute("Include");
+		if (tmp_filter_name.empty())
+		{
+			break;
+		}
 		MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, tmp_filter_name.c_str(), tmp_filter_name.length(), WideCharStr, sizeof(WCHAR) * 100);
 		if (memcmp(WideCharFilter, WideCharStr,sizeof(WCHAR)*100) == 0)
 		{

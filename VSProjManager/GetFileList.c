@@ -1,4 +1,11 @@
-﻿#include <stdio.h>
+﻿/*******************************************************************
+ * filename : GetFileList.c
+ * author   : yulei@nuaa.edu.cn
+ * content  : 
+ * date     : 
+/*******************************************************************/
+
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -167,7 +174,7 @@ static int get_file_list(char *search_dir,char * patten, char filelist[][MAX_FIL
 * @function: 获取search_dir目录和子目录下的所有文件名,包含绝对路径
 * @param1:     - 要搜索的目录文件(绝对路径)
 * @param2:    patten - 搜索模式 "*" 或者 "*.doc" 或者 "*.c*"
-* @param3：   filelist[][MAX_FILE_STR_LENGTH] - 文件名存储路径
+* @param3：   filelist[][260] - 文件名存储路径
 * @return1:  找到的文件数量 file_num 真正的文件数量
 */
 int getFileList(char *search_dir, char * patten, char filelist[][MAX_FILE_STR_LENGTH], char find_subdir)
@@ -195,10 +202,10 @@ int getFileList(char *search_dir, char * patten, char filelist[][MAX_FILE_STR_LE
 }
 
 /**
-* @function: 获取search_dir目录下的所有文件名，只包含子目录的路径和文件名
+* @function: 获取search_dir目录下的所有文件名，只包含文件名
 * @param1:   要搜索的目录文件(绝对路径)
 * @param2:   patten - 搜索模式 "*" 或者 "*.doc" 或者 "*.c*"
-* @param3：  filelist[][MAX_FILE_STR_LENGTH] - 文件名存储路径
+* @param3：  filelist[][260] - 文件名存储路径
 * @return1:  找到的文件数量 file_num 真正的文件数量
 */
 int getFileNameList(char *search_dir, char * patten, char filelist[][MAX_FILE_STR_LENGTH], char find_subdir)
