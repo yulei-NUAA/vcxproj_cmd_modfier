@@ -200,14 +200,18 @@ void RemoveFileNodeByFile(TiXmlElement * itemgroup, vector<string> rmfile_list)
 
 void ANSI2UTF8(const char * ansi_str, char *utf8_str, int str_len)
 {
-	BOOL default_char_used;
+	BOOL default_char_used = 0;
 	WCHAR wstr[260] = { 0 };
 	MultiByteToWideChar(CP_ACP, MB_ERR_INVALID_CHARS, ansi_str, str_len, wstr, sizeof(WCHAR) * str_len);
-	WideCharToMultiByte(CP_UTF8, 0, wstr, sizeof(WCHAR)*str_len, utf8_str, 260, 0, &default_char_used);
-	if (default_char_used)
+	//WideCharToMultiByte(CP_UTF8, 0, wstr, sizeof(WCHAR)*str_len, utf8_str, 260, 0, &default_char_used);
+	if (WideCharToMultiByte(CP_UTF8, 0, wstr, sizeof(WCHAR)*str_len, utf8_str, 260, NULL, NULL)==0)
 	{
-		cout << endl;
+		cout << "WideCharToMultiByte trans failed!" << endl;
 	}
+// 	if (default_char_used)
+// 	{
+// 		cout << endl;
+// 	}
 	return;
 }
 
